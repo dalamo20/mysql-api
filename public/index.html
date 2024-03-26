@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="./css/styles.css" />
+<title>Week 2</title>
+</head>
+<body>
+<header>
+    <div class="logo">FLUID</div>
+    <nav>
+        <a href="https://www.w3schools.com/howto/howto_css_login_form.asp">W3 Schools</a>
+        <a href="https://twitter.com/pusheensDad">Twitter</a>
+    </nav>
+</header>
+
+<div class="container">
+    <h2>Modal Login Form</h2>
+    <button onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Login</button>
+
+    <div id="id01" class="modal">
+        <form class="modal-content animate" method="post">
+            <div class="imgcontainer">
+              <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
+            </div>
+        
+            <div class="container">
+              <label for="uname"><b>Username</b></label>
+              <input type="text" placeholder="Enter Username" name="uname" required>
+        
+              <label for="psw"><b>Password</b></label>
+              <input type="password" placeholder="Enter Password" name="psw" required>
+                
+              <button type="submit">Login</button>
+              <label>
+                <input type="checkbox" checked="checked" name="remember"> Remember me
+              </label>
+            </div>
+        
+            <div class="container" style="background-color:#f1f1f1">
+              <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
+              <span class="psw"><a href="https://www.kualo.co.uk/404">Forgot password?</a></span>
+            </div>
+          </form>
+    </div>
+</div>
+</div>
+<footer>
+    &copy; 2024 FLUID. All rights reserved.
+</footer>
+
+<script src="./src/app.js">
+</script>
+
+</body>
+</html>
