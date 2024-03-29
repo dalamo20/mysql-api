@@ -4,14 +4,14 @@
   "description": "Assignment week 3 is to experiment with Restful API and MySQL.",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon ./src",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon ./src"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.20.2",
     "express": "^4.19.2",
+    "morgan": "^1.10.0",
     "nodemon": "^3.1.0"
   }
 }

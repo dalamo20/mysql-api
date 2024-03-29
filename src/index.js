@@ -1,7 +1,8 @@
 const express = require("express");
 const logger = require("morgan");
 const parser = require("body-parser");
-const barRoutes = require("./routes/drinks.routes");
+const ordersRoutes = require("./routes/orders.routes");
+const drinksRoutes = require("./routes/drinks.routes");
 const midware = require("./middleware/errors.middleware");
 
 const app = express();
@@ -15,10 +16,9 @@ app.use(logger(logLevel));
 app.use(parser.urlencoded({ extended: false }));
 app.use(parser.json());
 
-//Route Handling Middleware Fx's
-
-//handle routes for tasks
-app.use("/bar", barRoutes); //http://localhost/3000/bar
+//handle routes for the bar
+app.use("/drinks", drinksRoutes); //http://localhost/3000/drinks
+app.use("/orders", ordersRoutes); //http://localhost/3000/orders
 
 //handle 404 reqs
 app.use(midware.error404);
