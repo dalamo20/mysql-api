@@ -16,8 +16,8 @@ exports.getAllOrders = function (req, res) {
 exports.createOrder = function (req, res) {
   //get price of drinks from 'drinks' table
   con.query(
-    drinkQ.SINGLE_DRINK,
-    [req.params.drinkId],
+    drinkQ.ALL_DRINKS,
+    // [req.params.drinkId],
     function (err, drinkRes) {
       if (err) {
         res.send(err);
@@ -57,15 +57,26 @@ exports.getOrder = function (req, res) {
 exports.updateOrder = function (req, res) {
   //get price of drinks from 'drinks' table
   con.query(
-    drinkQ.SINGLE_DRINK,
-    [req.params.drinkId],
+    drinkQ.ALL_DRINKS,
+    // [req.params.drinkId],
     function (err, drinkRes) {
       if (err) {
         res.send(err);
         return;
       }
 
-      const total_price = drinkRes[0].price * req.body.quantity;
+      console.log("Drink Results:", drinkRes);
+      console.log("Requested Drink ID:", req.body.drink_id);
+
+      const updatedDrink = drinkRes.find(
+        (drink) => drink.id === req.body.drink_id
+      );
+      if (!updatedDrink) {
+        res.status(404).json({ message: "Drink not found" });
+        return;
+      }
+
+      const total_price = updatedDrink.price * req.body.quantity;
       //subquery
       //update order and use variable above for dynamic pricing in place of req.body.total_price
       con.query(
