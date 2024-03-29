@@ -1,12 +1,8 @@
-# mysqlRestful
+# mysql-api
 
 Assignment week 3 is to experiment with Restful API and MySQL.
 
-##
-
-## Directions Below
-
-## Example MySQL RESTful API
+## Similar Example for MySQL RESTful API
 
 RESTful service power most any website today that receives and trasmits data via HTTP or HTTPS protocol. What you'll find below is what's used from express to run a simple set of Create, Read, Update, and Delete (CRUD) methods.
 
@@ -200,3 +196,41 @@ con.connect(function(err) {
   });
 });
 ```
+
+## FUNCTIONALITY
+
+### DB Structure
+
+<img width="400" alt="tableCreation" src="https://github.com/dalamo20/viva-ventura/assets/35320043/014f2d2a-9f2d-4d10-ab1b-c7b9049981e2">
+
+- Before running 'npm start', database 'bardb' had to be created.
+- The tables 'drinks' and 'orders' are then created in the 'bardb' database (see below).  
+  <img width="377" alt="dbView" src="https://github.com/dalamo20/viva-ventura/assets/35320043/69486f07-e9b0-4ab2-917f-e3339818d097">
+
+### CREATE
+
+<img width="1680" alt="createOrder" src="https://github.com/dalamo20/viva-ventura/assets/35320043/0ca46582-488f-4eac-8b23-0d1c23a603ba">
+
+- Here is a successful order in postman on the right side.
+- Drink with id #1 was ordered, with a quantity of 2 and the total price is calculated by multiplying the quantity with the price of the drink item.
+
+### READ
+
+<img width="1143" alt="getAllDrinks" src="https://github.com/dalamo20/viva-ventura/assets/35320043/5ffc87e2-dd1a-44f6-86fb-8d1e22764998">
+
+- This is a successful GET response in Postman. As you can see the 2 drink items I have created in mysql.
+
+### UPDATE
+
+<img width="1147" alt="update1" src="https://github.com/dalamo20/viva-ventura/assets/35320043/3c83962e-fcd2-4c9f-bb5d-9961467b1b95">
+
+- Before, I READ in my GET response that I created a wine listing at 18.00. Here I am updating that to 16.00.
+- In my url, I target the 2nd drink id (/drinks/2) and in the body I would change the name and price.
+
+### DELETE
+
+<img width="1137" alt="orderDeleted" src="https://github.com/dalamo20/viva-ventura/assets/35320043/7db46386-74a9-4d3e-9682-7cdfbb8147ca">
+
+- In my params, I include the ID of the order I would like deleted (/orders/3).
+- A response message then indicates that the deletion was successful.
+- This can also be confirmed by using a GET on all orders (/orders).

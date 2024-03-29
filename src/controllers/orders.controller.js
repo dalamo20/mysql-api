@@ -14,34 +14,40 @@ exports.getAllOrders = function (req, res) {
 };
 
 exports.createOrder = function (req, res) {
-  //get price of drinks from 'drinks' table
-  con.query(
-    drinkQ.ALL_DRINKS,
-    // [req.params.drinkId],
-    function (err, drinkRes) {
-      if (err) {
-        res.send(err);
-        return;
-      }
-
-      const total_price = drinkRes[0].price * req.body.quantity;
-      //subquery
-      //create order and use variable above for dynamic pricing in place of req.body.total_price
-      con.query(
-        queries.INSERT_ORDER,
-        [req.body.drink_id, req.body.quantity, total_price],
-        function (err, result) {
-          if (err) {
-            res.send(err);
-          }
-          console.log("Order created: " + result);
-          res.json({
-            message: "Number of records inserted: " + result.affectedRows,
-          });
-        }
-      );
+  //get all drink items
+  con.query(drinkQ.ALL_DRINKS, function (err, drinkRes) {
+    if (err) {
+      res.send(err);
+      return;
     }
-  );
+    //storing the price of the drink item in a var newDrink if it exists
+    const drinkId = parseInt(req.body.drink_id);
+    const newDrink = drinkRes.find((drink) => drink.id === drinkId);
+    console.log("New Drink:", newDrink);
+    if (!newDrink) {
+      res.status(404).json({ message: "Drink is not on the menu." });
+      return;
+    }
+    console.log("Price of updated drink:", newDrink.price);
+
+    //total price using updated drink price and quantity
+    const total_price = newDrink.price * req.body.quantity;
+    //create order and use variable above for dynamic pricing in place of req.body.total_price
+    con.query(
+      queries.INSERT_ORDER,
+      [req.body.drink_id, req.body.quantity, total_price],
+      function (err, result) {
+        if (err) {
+          res.send(err);
+          return;
+        }
+        console.log("Order created: " + result);
+        res.json({
+          message: "Number of records inserted: " + result.affectedRows,
+        });
+      }
+    );
+  });
 };
 
 exports.getOrder = function (req, res) {
@@ -68,17 +74,23 @@ exports.updateOrder = function (req, res) {
       console.log("Drink Results:", drinkRes);
       console.log("Requested Drink ID:", req.body.drink_id);
 
-      const updatedDrink = drinkRes.find(
-        (drink) => drink.id === req.body.drink_id
-      );
+      //debugging: viewing drink id's available in drinkRes obj
+      drinkRes.forEach((drink) => console.log("Drink ID:", drink.id));
+
+      //Bug found/fixed: I had to parse the drink_id below
+      const drinkId = parseInt(req.body.drink_id);
+      const updatedDrink = drinkRes.find((drink) => drink.id === drinkId);
+      console.log("Updated Drink:", updatedDrink);
       if (!updatedDrink) {
-        res.status(404).json({ message: "Drink not found" });
+        res.status(404).json({ message: "Drink is not on the menu." });
         return;
       }
+      console.log("price of updated drink:", updatedDrink.price);
 
+      //total price using updated drink price and quantity
       const total_price = updatedDrink.price * req.body.quantity;
-      //subquery
-      //update order and use variable above for dynamic pricing in place of req.body.total_price
+
+      //order is updated with new total price var from above
       con.query(
         queries.UPDATE_ORDER,
         [req.body.drink_id, req.body.quantity, total_price, req.params.orderId],
