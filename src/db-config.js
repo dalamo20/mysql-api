@@ -1,6 +1,7 @@
 const mysql = require("mysql");
 const drinkQ = require("./queries/drinks.queries");
 const orderQ = require("./queries/orders.queries");
+const authQ = require("./queries/orders.queries");
 
 const host = process.env.DB_HOST || "localhost";
 const user = process.env.DB_USER || "root";
@@ -26,6 +27,11 @@ con.connect(function (err) {
   con.query(orderQ.CREATE_ORDERS_TABLE, function (err, result) {
     if (err) throw err;
     console.log("Orders table created or exists already!");
+  });
+
+  con.query(authQ.CREATE_USERS_TABLE, function (err, result) {
+    if (err) throw err;
+    console.log("Users table created or exists already!");
   });
 });
 
