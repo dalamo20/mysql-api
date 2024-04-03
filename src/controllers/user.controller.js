@@ -3,7 +3,7 @@ const con = require("../db-config");
 const jwtconfig = require("../jwt-config");
 const queries = require("../queries/user.queries");
 
-exports.getMe = function (req, res) {
+exports.getUser = function (req, res) {
   const token = req.headers["auth-token"];
 
   if (!token) {
@@ -18,7 +18,7 @@ exports.getMe = function (req, res) {
         .send({ auth: false, message: "Failed to authenticate token." });
     }
 
-    con.query(queries.GET_ME_BY_USER_ID, [decoded.id], function (err, user) {
+    con.query(queries.GET_USER_BY_ID, [decoded.id], function (err, user) {
       if (err) {
         res.status(500).send({ msg: "Could not find the user." });
       }

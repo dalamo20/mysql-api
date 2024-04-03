@@ -19,7 +19,7 @@ exports.registerUser = function (req, res) {
 
       //perform registration
       con.query(
-        userQueries.GET_ME_BY_USERNAME,
+        userQueries.GET_USER_BY_USERNAME,
         [req.body.username],
         function (err, user) {
           if (err) {
@@ -36,7 +36,7 @@ exports.registerUser = function (req, res) {
 exports.login = function (req, res) {
   //check user exist
   con.query(
-    userQueries.GET_ME_BY_USERNAME_WITH_PASSWORD,
+    userQueries.GET_USER_BY_USERNAME_WITH_PASSWORD,
     [req.body.username],
     function (err, user) {
       if (err) {
@@ -62,36 +62,70 @@ exports.login = function (req, res) {
   );
 };
 
-/*
-THIS UPDATE NEEDS TO BE SEPERATED INTO DIFFERENT UPDATES E.G: UDPATE USERNAME, UPDATE EMAIL, UPDATE PASSWORD.
-THERE IS AN ISSUE WITH THE UPDATE.
-*/
 exports.updateUser = function (req, res) {
   con.query(
-    userQueries.GET_ME_BY_USER_ID_WITH_PASSWORD,
+    userQueries.GET_USER_BY_ID_WITH_PASSWORD,
     [req.user.id],
     function (err, user) {
-      console.log(err, user);
       if (err) {
-        res.status(500);
-        res.send({ msg: "Could not retrieve user." });
+        console.log(err);
+        return res.status(500).send({ msg: "Could not retrieve user." });
       }
-      console.log(user);
 
-      const passwordHash = bcrypt.hashSync(req.body.password);
+      if (!user) {
+        return res.status(404).send({ msg: "User not found." });
+      }
 
-      //perform update
-      con.query(
-        authQueries.UPDATE_USER,
-        [req.body.username, req.body.email, passwordHash, user[0].id],
-        function (err, result) {
-          if (err) {
-            console.log(err);
-            res.status(500).send({ msg: "Could not update user settings." });
+      // Extract updated fields from the request body
+      const { username, email, password } = req.body;
+
+      // Perform separate update operations for username, email, and password
+      const updates = [];
+      if (username) updates.push({ field: "username", value: username });
+      if (email) updates.push({ field: "email", value: email });
+      if (password) {
+        const passwordHash = bcrypt.hashSync(password);
+        updates.push({ field: "password", value: passwordHash });
+      }
+
+      // Execute update queries for each field
+      updates.forEach((update) => {
+        con.query(
+          authQueries.UPDATE_USER_FIELD,
+          [update.value, update.field, req.user.id],
+          function (err, result) {
+            if (err) {
+              console.log(err);
+              return res
+                .status(500)
+                .send({ msg: `Could not update ${update.field}.` });
+            }
           }
-          res.json({ msg: "Updated successfully!" });
-        }
-      );
+        );
+      });
+
+      res.json({ msg: "Updated successfully!" });
     }
   );
+};
+
+exports.deleteUser = function (req, res) {
+  // Extract user ID from request parameters or JWT token
+  const userId = req.user.id;
+
+  // Perform delete operation
+  con.query(authQueries.DELETE_USER, [userId], function (err, result) {
+    if (err) {
+      console.log(err);
+      return res.status(500).send({ msg: "Could not delete user." });
+    }
+
+    // Check if any rows were affected
+    if (result.affectedRows === 0) {
+      return res.status(404).send({ msg: "User not found." });
+    }
+
+    // Return success message
+    res.json({ msg: "User deleted successfully!" });
+  });
 };

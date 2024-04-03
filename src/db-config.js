@@ -1,7 +1,7 @@
 const mysql = require("mysql");
 const drinkQ = require("./queries/drinks.queries");
 const orderQ = require("./queries/orders.queries");
-const authQ = require("./queries/orders.queries");
+const authQ = require("./queries/auth.queries");
 
 const host = process.env.DB_HOST || "localhost";
 const user = process.env.DB_USER || "root";

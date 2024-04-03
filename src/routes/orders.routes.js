@@ -8,7 +8,7 @@ ordersRoutes
   .post("/", controllers.createOrder);
 
 ordersRoutes
-  .get("/:orderId", controllers.getOrder) // GET http://localhost:3000/orders/1
+  .get("/:orderId", controllers.getOrder) // GET http://localhost:3000/api/orders/1
   .put("/:orderId", controllers.updateOrder)
   .delete("/:orderId", controllers.deleteOrder);
 

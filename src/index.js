@@ -1,5 +1,6 @@
 const express = require("express");
 const logger = require("morgan");
+const cors = require("cors");
 const parser = require("body-parser");
 const ordersRoutes = require("./routes/orders.routes");
 const drinksRoutes = require("./routes/drinks.routes");
@@ -16,10 +17,12 @@ app.use(logger(logLevel));
 //middleware - parses incoming reqs data (https://github.com/express.js/body-parser)
 app.use(parser.urlencoded({ extended: false }));
 app.use(parser.json());
+//allows websites to talk w/ api service
+app.use(cors());
 
 //handle routes for the bar (endpoints)
-app.use("/drinks", drinksRoutes); //http://localhost/3000/drinks
-app.use("/orders", ordersRoutes); //http://localhost/3000/orders
+app.use("/api/drinks", drinksRoutes); //http://localhost/3000/api/drinks
+app.use("/api/orders", ordersRoutes); //http://localhost/3000/api/orders
 app.use("/api/auth", authRoutes); //http://localhost/3000/api/auth
 
 //handle 404 reqs
