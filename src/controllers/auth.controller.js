@@ -1,4 +1,4 @@
-const jwt = require("jasonwebtoken");
+const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const con = require("../db-config");
 const jwtconfig = require("../jwt-config");
