@@ -6,6 +6,7 @@ const ordersRoutes = require("./routes/orders.routes");
 const drinksRoutes = require("./routes/drinks.routes");
 const authRoutes = require("./routes/auth.routes");
 const midware = require("./middleware/errors.middleware");
+const userRoutes = require("./routes/user.routes");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -24,6 +25,7 @@ app.use(cors());
 app.use("/api/drinks", drinksRoutes); //http://localhost/3000/api/drinks
 app.use("/api/orders", ordersRoutes); //http://localhost/3000/api/orders
 app.use("/api/auth", authRoutes); //http://localhost/3000/api/auth
+app.use("/api/user", userRoutes); //http://localhost3000/api/user
 
 //handle 404 reqs
 app.use(midware.error404);

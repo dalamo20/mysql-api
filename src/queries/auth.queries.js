@@ -3,7 +3,7 @@ exports.CREATE_USERS_TABLE = `CREATE TABLE IF NOT EXISTS users(
     username varchar(255) NOT NULL UNIQUE,
     email varchar(255) NOT NULL,
     password varchar(255) NOT NULL,
-    PRIMARY KEY (user_id)
+    PRIMARY KEY (id)
 )`;
 
 /* AUTHENTICATION Queries */

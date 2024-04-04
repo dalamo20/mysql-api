@@ -52,7 +52,7 @@ exports.login = function (req, res) {
             res.status(400).send({ msg: "Invalid password!" });
           }
           //create token
-          const token = jwt.sign({ id: user[0].user_id }, jwtconfig.secret);
+          const token = jwt.sign({ id: user[0].id }, jwtconfig.secret);
           res
             .header("auth-token", token)
             .send({ auth: true, msg: "Logged in!" });
@@ -76,10 +76,12 @@ exports.updateUser = function (req, res) {
         return res.status(404).send({ msg: "User not found." });
       }
 
-      // Extract updated fields from the request body
+      //updated fields - deconstruction
       const { username, email, password } = req.body;
+      console.log("Username: " + username);
+      console.log("Email: " + email);
+      console.log("Password: " + password);
 
-      // Perform separate update operations for username, email, and password
       const updates = [];
       if (username) updates.push({ field: "username", value: username });
       if (email) updates.push({ field: "email", value: email });
@@ -87,45 +89,48 @@ exports.updateUser = function (req, res) {
         const passwordHash = bcrypt.hashSync(password);
         updates.push({ field: "password", value: passwordHash });
       }
-
-      // Execute update queries for each field
-      updates.forEach((update) => {
-        con.query(
-          authQueries.UPDATE_USER_FIELD,
-          [update.value, update.field, req.user.id],
-          function (err, result) {
-            if (err) {
-              console.log(err);
-              return res
-                .status(500)
-                .send({ msg: `Could not update ${update.field}.` });
-            }
-          }
-        );
-      });
-
-      res.json({ msg: "Updated successfully!" });
+      //this promise waits for the fields to update
+      Promise.all(
+        updates.map((updated) => {
+          return new Promise((resolve, reject) => {
+            con.query(
+              authQueries.UPDATE_USER,
+              [updated.value, updated.value, updated.value, req.user.id],
+              function (err, result) {
+                if (err) {
+                  console.log(err);
+                  reject(`Could not update ${updated.field}.`);
+                } else {
+                  resolve();
+                }
+              }
+            );
+          });
+        })
+      )
+        .then(() => {
+          res.json({ msg: "Updated successfully!" });
+        })
+        .catch((error) => {
+          console.error(error);
+          res
+            .status(500)
+            .send({ msg: "An error occurred while updating user." });
+        });
     }
   );
 };
 
 exports.deleteUser = function (req, res) {
-  // Extract user ID from request parameters or JWT token
   const userId = req.user.id;
-
-  // Perform delete operation
   con.query(authQueries.DELETE_USER, [userId], function (err, result) {
     if (err) {
       console.log(err);
       return res.status(500).send({ msg: "Could not delete user." });
     }
-
-    // Check if any rows were affected
     if (result.affectedRows === 0) {
       return res.status(404).send({ msg: "User not found." });
     }
-
-    // Return success message
     res.json({ msg: "User deleted successfully!" });
   });
 };

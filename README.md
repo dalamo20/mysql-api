@@ -234,3 +234,50 @@ con.connect(function(err) {
 - In my params, I include the ID of the order I would like deleted (/orders/3).
 - A response message then indicates that the deletion was successful.
 - This can also be confirmed by using a GET on all orders (/orders).
+
+## AUTHENTICATION
+
+### REGISTER USER
+
+<img width="547" alt="userRegistered" src="https://github.com/dalamo20/viva-ventura/assets/35320043/18be35d3-c049-4467-904d-5c771ad80611">
+
+- I am doing a POST to my new user table where I pass username, password, and email into the body.
+
+### USER IN DB
+
+<img width="710" alt="getUser" src="https://github.com/dalamo20/viva-ventura/assets/35320043/8f099893-ba0f-44e0-9e09-6025c6f47dde">
+
+- Here is a quick view of the bardb database with the new user added.
+- The password is encrypted thanks to the bcrypt library.
+
+### LOGIN
+
+<img width="534" alt="loginToken" src="https://github.com/dalamo20/viva-ventura/assets/35320043/b7a4ff53-8b54-429e-836f-8220d5a62d1f">
+
+- Using a POST request with a different endpoint (/api/login), I pass in the body the username and password.
+- If successful, a token should be returned as seen in the image above and thanks to the jasonwebtoken library.
+
+### READ USER
+
+<img width="513" alt="getUserWToken" src="https://github.com/dalamo20/viva-ventura/assets/35320043/fb528c5e-1a12-487e-89d0-6db87f3d78c5">
+
+- In this GET request, I am only adding the 'auth-token' header as the key and then passing in the value of the auth-token from the above login.
+
+### UPDATE USER
+
+<img width="388" alt="userUpdate1" src="https://github.com/dalamo20/mysql-api/assets/35320043/42eefd77-7dfb-4f6c-a9a0-3e65bc10b156">
+
+- To update the user, I perform a POST in postman to endpoint '/api/user/update'.
+- I use the same auth-token header from the GET request login.
+- I then include in the body the fields I am changing with new values.
+- I can then perform another GET in postman to view my changes or view the changes directly in my database.
+
+### DELETE USER
+
+<img width="429" alt="deleteUser" src="https://github.com/dalamo20/mysql-api/assets/35320043/e908cf0b-c638-48d8-872d-229b95bee1a4">
+
+- In postman I am performing a POST to endpoint '/api/user/delete'.
+- This request only accepts auth-token header of the current logged in user.
+- When I do another GET on my user (see below), the array is now empty.
+
+<img width="429" alt="deleteUser" src="https://github.com/dalamo20/mysql-api/assets/35320043/e91d3fd6-67c5-4ebc-9912-459813801450">

@@ -4,8 +4,8 @@ const userController = require("../controllers/user.controller");
 const verifyToken = require("../middleware/auth.middleware");
 const userRoutes = express.Router();
 
-userRoutes.get("/user", userController.getUser);
-userRoutes.post("/user/update", verifyToken, authController.updateUser);
-userRoutes.post("/user/delete", verifyToken, authController.deleteUser);
+userRoutes.get("/", userController.getUser);
+userRoutes.post("/update", verifyToken, authController.updateUser);
+userRoutes.post("/delete", verifyToken, authController.deleteUser);
 
 module.exports = userRoutes;
