@@ -281,3 +281,12 @@ con.connect(function(err) {
 - When I do another GET on my user (see below), the array is now empty.
 
 <img width="429" alt="deleteUser" src="https://github.com/dalamo20/mysql-api/assets/35320043/e91d3fd6-67c5-4ebc-9912-459813801450">
+
+### FRONTEND CONNECTION
+
+<img width="1680" alt="fullstack" src="https://github.com/dalamo20/mysql-api/assets/35320043/a1a22912-bbc6-46dd-a3c3-daccff5f90a7">
+
+- Here I am showing a connection from my frontend application with my backend server.
+- Upon a successful registration, the database (highlighted on the right of the image) in the console shows that I was able to add a user (user1).
+- With this new user, I was returned to the login page, entered username and password that I just created and logged in.
+- I am then redirected to the home page.
