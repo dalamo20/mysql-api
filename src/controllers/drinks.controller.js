@@ -1,62 +1,96 @@
-const con = require("../db-config");
-const queries = require("../queries/drinks.queries");
+const connection = require("../db-config");
+const {
+  ALL_DRINKS,
+  SINGLE_DRINK,
+  INSERT_DRINK,
+  UPDATE_DRINK,
+  DELETE_DRINK,
+} = require("../queries/drinks.queries");
+const query = require("../utils/query");
 
 /* Drinks */
-exports.getAllDrinks = function (req, res) {
-  con.query(queries.ALL_DRINKS, function (err, result, fields) {
-    if (err) {
-      res.send(err);
-    }
-    console.log("Take a look at our menu.");
-    res.json(result);
+exports.getAllDrinks = async (req, res) => {
+  //establish a connection
+  const con = await connection().catch((err) => {
+    throw err;
   });
+  //query all drinks
+  const drinks = await query(con, ALL_DRINKS).catch((err) => {
+    res.send(err);
+  });
+
+  if (drinks.length) {
+    res.json(drinks);
+  }
 };
 
-exports.createDrink = function (req, res) {
-  con.query(
-    queries.INSERT_DRINK,
-    [req.body.name, req.body.price],
-    function (err, result) {
-      if (err) {
-        res.send(err);
-      }
-      console.log("Drink added to the menu: " + result);
-      res.json({
-        message: "Number of records inserted: " + result.affectedRows,
-      });
+exports.createDrink = async (req, res) => {
+  const con = await connection().catch((err) => {
+    throw err;
+  });
+
+  const result = await query(con, INSERT_DRINK, [
+    req.body.name,
+    req.body.price,
+  ]).catch((err) => {
+    res.send(err);
+  });
+
+  if (result.affectedRows === 1) {
+    res.json({
+      message: "Drink added to the menu",
+    });
+  }
+};
+
+exports.getDrink = async (req, res) => {
+  const con = await connection().catch((err) => {
+    throw err;
+  });
+
+  const drink = await query(con, SINGLE_DRINK, [req.params.drinkId]).catch(
+    (err) => {
+      res.send(err);
     }
   );
+
+  if (drink.length) {
+    res.json(drink);
+  }
 };
 
-exports.getDrink = function (req, res) {
-  con.query(queries.SINGLE_DRINK, [req.params.drinkId], function (err, result) {
-    if (err) {
-      res.send(err);
-    }
-    console.log("Here is the drink item on the menu.");
-    res.json(result);
+exports.updateDrink = async (req, res) => {
+  const con = await connection().catch((err) => {
+    throw err;
   });
+
+  const result = await query(con, UPDATE_DRINK, [
+    req.body.name,
+    req.body.price,
+    req.params.drinkId,
+  ]).catch((err) => {
+    res.send(err);
+  });
+
+  if (result.affectedRows === 1) {
+    res.json(result);
+  }
 };
 
-exports.updateDrink = function (req, res) {
-  con.query(
-    queries.UPDATE_DRINK,
-    [req.body.name, req.body.price, req.params.drinkId],
-    function (err, data) {
-      if (err) {
-        res.send(err);
-      }
-      console.log("Updating our menu.");
-      res.json(data);
+exports.deleteDrink = async (req, res) => {
+  const con = await connection().catch((err) => {
+    throw err;
+  });
+
+  const result = await query(con, DELETE_DRINK, [req.params.drinkId]).catch(
+    (err) => {
+      res.send(err);
     }
   );
-};
 
-exports.deleteDrink = function (req, res) {
-  con.query(queries.DELETE_DRINK, [req.params.drinkId], function (err) {
-    if (err) {
-      res.send(err);
-    }
-    res.json({ message: "Drink is off the menu!" });
-  });
+  if (result.affectedRows === 1) {
+    res.json({
+      message: "Drink deleted from the menu",
+    });
+  }
 };

@@ -1,7 +1,8 @@
 const mysql = require("mysql");
-const drinkQ = require("./queries/drinks.queries");
-const orderQ = require("./queries/orders.queries");
-const authQ = require("./queries/auth.queries");
+const { CREATE_DRINKS_TABLE } = require("./queries/drinks.queries");
+const { CREATE_ORDERS_TABLE } = require("./queries/orders.queries");
+const { CREATE_USERS_TABLE } = require("./queries/user.queries");
+const query = require("./utils/query");
 
 const host = process.env.DB_HOST || "localhost";
 const user = process.env.DB_USER || "root";
@@ -15,24 +16,51 @@ const con = mysql.createConnection({
   database,
 });
 
-con.connect(function (err) {
-  if (err) throw err;
-  console.log("Connected!");
+const connection = async () =>
+  new Promise((resolve, reject) => {
+    const con = mysql.createConnection({
+      host,
+      user,
+      password,
+      database,
+    });
 
-  con.query(drinkQ.CREATE_DRINKS_TABLE, function (err, result) {
-    if (err) throw err;
-    console.log("Drinks table created or exists already!");
+    con.connect((err) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+    });
+
+    resolve(con);
   });
 
-  con.query(orderQ.CREATE_ORDERS_TABLE, function (err, result) {
-    if (err) throw err;
-    console.log("Orders table created or exists already!");
+(async () => {
+  const _con = await connection().catch((err) => {
+    throw err;
   });
 
-  con.query(authQ.CREATE_USERS_TABLE, function (err, result) {
-    if (err) throw err;
-    console.log("Users table created or exists already!");
-  });
-});
+  const userTableCreated = await query(_con, CREATE_USERS_TABLE).catch(
+    (err) => {
+      console.log(err);
+    }
+  );
 
-module.exports = con;
+  const drinksTableCreated = await query(_con, CREATE_DRINKS_TABLE).catch(
+    (err) => {
+      console.log(err);
+    }
+  );
+
+  const ordersTableCreated = await query(_con, CREATE_ORDERS_TABLE).catch(
+    (err) => {
+      console.log(err);
+    }
+  );
+
+  if (!!userTableCreated && !!ordersTableCreated && !!drinksTableCreated) {
+    console.log("Tables Created!");
+  }
+})();
+
+module.exports = connection;
