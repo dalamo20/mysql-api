@@ -47,7 +47,6 @@ exports.createOrder = async (req, res) => {
   if (result.affectedRows === 1) {
     res.json({
       message: "Order created",
-      affectedRows: result.affectedRows,
     });
   }
 };
@@ -90,7 +89,9 @@ exports.updateOrder = async (req, res) => {
     throw err;
   });
   if (result.affectedRows === 1) {
-    res.json(result);
+    res.json({ message: "Order updated" });
+  } else {
+    res.status(404).json({ message: "Order not found" });
   }
 };
 

@@ -290,3 +290,10 @@ con.connect(function(err) {
 - Upon a successful registration, the database (highlighted on the right of the image) in the console shows that I was able to add a user (user1).
 - With this new user, I was returned to the login page, entered username and password that I just created and logged in.
 - I am then redirected to the home page.
+
+### UNIT TESTING
+
+<img width="1680" alt="mochaChai" src="https://github.com/dalamo20/viva-ventura/assets/35320043/d033474b-c085-4688-9765-8269b15f2f5e">
+
+- Here I am demonstrating working unit tests using mocha framework with chai library.
+- I'm also showing that I had to install an older version of chai that was compatible with the current ESM.
