@@ -55,6 +55,7 @@
 //       .post("/api/auth/login")
 //       .send(testUser)
 //       .end((err, resp) => {
+//         console.log("auth: " + resp.body.access_token);
 //         expect(resp.body.auth).to.be.true;
 //         expect(resp.body.expires_in).to.be.eql(86400);
 //         expect(resp.body.access_token).to.be.a("string");
