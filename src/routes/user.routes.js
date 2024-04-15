@@ -7,7 +7,7 @@ const {
 const canAccess = require("../middleware/auth.middleware");
 const userRoutes = express.Router();
 
-userRoutes.get("/", getUser);
+userRoutes.get("/", canAccess, getUser);
 userRoutes.put("/update", canAccess, updateUser);
 userRoutes.delete("/delete", canAccess, deleteUser);
 

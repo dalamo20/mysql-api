@@ -6,7 +6,6 @@ const {
   GET_USER_BY_ID,
   GET_USER_BY_ID_WITH_PASSWORD,
   UPDATE_USER,
-  DELETE_USER,
 } = require("../queries/user.queries");
 
 exports.getUser = async (req, res) => {
@@ -72,29 +71,19 @@ exports.updateUser = async function (req, res) {
     res.json({ msg: "Nothing to update..." });
   }
 };
-
+//* IN PROGRESS: THIS IS DELETE BY ID (WHAT IF USER DELETES PROFILE?) */
 exports.deleteUser = async function (req, res) {
-  // establish a connection
   const con = await connection().catch((err) => {
     throw err;
   });
-
-  // check for existing user first (optional, can be removed for efficiency)
-  const user = await query(con, GET_USER_BY_ID_WITH_PASSWORD, [
-    req.user.id,
-  ]).catch((err) => {
-    res.status(500);
-    res.send({ msg: "Could not retrieve user." });
-  });
-
-  // Perform delete
+  //using delete by id here....BUT I am deleting by id
   const result = await query(con, DELETE_USER, [req.user.id]).catch((err) => {
     res.status(500).send({ msg: "Could not delete user." });
   });
 
   if (result.affectedRows === 1) {
-    res.json({ msg: "User deleted succesfully!" });
+    res.json({ msg: "User deleted successfully!" });
   } else {
-    res.status(404).json({ msg: "User not found." });
+    res.status(200).json({ msg: "User not found." });
   }
 };
