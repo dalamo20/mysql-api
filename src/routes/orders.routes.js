@@ -6,14 +6,17 @@ const {
   deleteOrder,
 } = require("../controllers/orders.controller");
 const express = require("express");
+const canAccess = require("../middleware/auth.middleware");
 
 const ordersRoutes = express.Router();
 
-ordersRoutes.get("/", getAllOrders).post("/", createOrder);
+ordersRoutes
+  .get("/", canAccess, getAllOrders)
+  .post("/", canAccess, createOrder);
 
 ordersRoutes
-  .get("/:orderId", getOrder) // GET http://localhost:3000/api/orders/1
-  .put("/:orderId", updateOrder)
-  .delete("/:orderId", deleteOrder);
+  .get("/:orderId", canAccess, getOrder) // GET http://localhost:3000/api/orders/1
+  .put("/:orderId", canAccess, updateOrder)
+  .delete("/:orderId", canAccess, deleteOrder);
 
 module.exports = ordersRoutes;
