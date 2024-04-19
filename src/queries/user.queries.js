@@ -6,18 +6,25 @@ exports.CREATE_USERS_TABLE = `CREATE TABLE IF NOT EXISTS users(
     PRIMARY KEY (id)
 )`;
 
-exports.GET_USER_BY_ID = `SELECT id, username, email FROM users WHERE id = ?`;
+exports.GET_USER_BY_ID = (decodedId) =>
+  `SELECT id, username, email FROM users WHERE id = ${decodedId}`;
 
-exports.GET_USER_BY_USERNAME = `SELECT id, username, email FROM users WHERE username = ?`;
+exports.GET_USER_BY_USERNAME = (userName) =>
+  `SELECT id, username, email FROM users WHERE username = ${userName}`;
 
-exports.GET_USER_BY_ID_WITH_PASSWORD = `SELECT * FROM users WHERE id = ?`;
+exports.GET_USER_BY_ID_WITH_PASSWORD = (userId) =>
+  `SELECT * FROM users WHERE id = ${userId}`;
 
-exports.GET_USER_BY_USERNAME_WITH_PASSWORD = `SELECT * FROM users WHERE username = ?`;
+exports.GET_USER_BY_USERNAME_WITH_PASSWORD = (userName) =>
+  `SELECT * FROM users WHERE username = ${userName}`;
 
-exports.INSERT_NEW_USER = `INSERT INTO users (username, email, password) VALUES (?, ?, ?)`;
+exports.INSERT_NEW_USER = (userName, email, pass) =>
+  `INSERT INTO users (username, email, password) VALUES (${userName}, ${email}, ${pass})`;
 
-exports.UPDATE_USER = `UPDATE users SET username = ?, email = ?, password = ? WHERE id = ?`;
+exports.UPDATE_USER = (userId, newValues) =>
+  `UPDATE users SET ${newValues} WHERE id = ${userId}`;
 
+exports.DELETE_USER = (userId) => `DELETE FROM users WHERE id = ${userId}`;
+
+//admin functionality => future
 exports.VIEW_ALL_USERS = `SELECT id, username, email FROM users`;
-
-exports.DELETE_USER = `DELETE FROM users WHERE id = ?`;

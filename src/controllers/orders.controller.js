@@ -32,7 +32,7 @@ exports.createOrder = async (req, res) => {
   const user = req.user;
 
   //middleware check
-  if (!user.id) {
+  if (user.id) {
     const con = await connection().catch((err) => {
       throw err;
     });
@@ -46,9 +46,11 @@ exports.createOrder = async (req, res) => {
     if (!newDrink) {
       return res.status(404).json({ message: "Drink is not on the menu." });
     }
+
     const total_price = newDrink.price * req.body.quantity;
     const itemId = mysql.escape(req.body.drink_id);
     const quant = mysql.escape(req.body.quantity);
+
     const result = await query(
       con,
       INSERT_ORDER(user.id, itemId, quant, total_price)
@@ -83,10 +85,10 @@ const _buildValuesString = (req) => {
   const body = req.body;
   const values = Object.keys(body).map(
     // [name, status].map()
-    (key) => `${key} = ${mysql.escape(body[key])}` // 'New 1 order name'
+    (key) => `${key} = ${mysql.escape(body[key])}` // 'New 1 drink name'
   );
 
-  values.push(`created_date = NOW()`); // update current date and time
+  // values.push(`created_date = NOW()`); // update current date and time
   values.join(", "); // make into a string
   return values;
 };
@@ -98,36 +100,31 @@ exports.updateOrder = async (req, res) => {
 
   const values = _buildValuesString(req);
 
+  // query all drinks for the current user
   const drinkRes = await query(con, ALL_DRINKS(req.user.id), []).catch(
     serverError(res)
   );
 
-  console.log(
-    "ORDER CONTROLLER: /UPDATE METHOD CAPTURE ALL DRINKS => " + drinkRes
-  );
-
+  // find the drink to update based on the drink ID from drinks table
   const drinkId = parseInt(req.body.drink_id);
   const updatedDrink = drinkRes.find((drink) => drink.id === drinkId);
+
   if (!updatedDrink) {
     return res.status(404).json({ message: "Drink is not on the menu." });
   }
+
   const total_price = updatedDrink.price * req.body.quantity;
+
+  // Perform update. total_price was not being passed into values.
   const result = await query(
     con,
-    UPDATE_ORDER(req.user.id, req.params.orderId, values)
+    UPDATE_ORDER(req.user.id, req.params.orderId, values, total_price)
   ).catch(serverError(res));
 
-  // const result = await query(con, UPDATE_ORDER, [
-  //   req.body.drink_id,
-  //   req.body.quantity,
-  //   total_price,
-  //   req.params.orderId,
-  // ]).catch((err) => {
-  //   throw err;
-  // });
-
   if (result.affectedRows !== 1) {
-    res.status(500).json({ msg: `Unable to update order: '${req.params.id}'` }); // keepin as name instead drink_name
+    return res
+      .status(500)
+      .json({ msg: `Unable to update order: '${req.params.orderId}'` });
   }
   res.json(result);
 };
@@ -145,7 +142,7 @@ exports.deleteOrder = async (req, res) => {
   if (result.affectedRows !== 1) {
     res
       .status(500)
-      .json({ msg: `Unable to delete order at: ${req.params.drinkId}` });
+      .json({ msg: `Unable to delete order : ${req.params.drinkId}` });
   }
-  res.json({ msg: "Order taken off the menu." });
+  res.json({ msg: "Order deleted successfully!" });
 };

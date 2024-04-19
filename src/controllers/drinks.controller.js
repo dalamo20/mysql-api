@@ -32,7 +32,7 @@ exports.createDrink = async (req, res) => {
   const user = req.user;
 
   //middleware check
-  if (!user.id) {
+  if (user.id) {
     const con = await connection().catch((err) => {
       throw err;
     });
@@ -65,7 +65,7 @@ exports.getDrink = async (req, res) => {
   if (!drink.length) {
     res.status(400).json({ msg: "No drinks available for this user." });
   }
-  res.json(task);
+  res.json(drink);
 };
 
 const _buildValuesString = (req) => {

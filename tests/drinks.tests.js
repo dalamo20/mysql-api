@@ -37,7 +37,7 @@
 
 //   it.skip("should POST a new drink", (done) => {
 //     const newDrink = {
-//       name: "Test Drink AGAIN",
+//       name: "Drink Special",
 //       price: 8.00,
 //     };
 //     chai

@@ -23,8 +23,8 @@ exports.SINGLE_ORDER = (userId, orderId) =>
 exports.INSERT_ORDER = (userId, drinkId, quant, total) =>
   `INSERT INTO orders (user_id, drink_id, quantity, total_price) VALUES (${userId}, ${drinkId}, ${quant}, ${total})`;
 
-exports.UPDATE_ORDER = (userId, orderId, newValues) =>
-  `UPDATE orders SET ${newValues} WHERE user_id = ${userId} AND id = ${orderId}`;
+exports.UPDATE_ORDER = (userId, orderId, newValues, totalPrice) =>
+  `UPDATE orders SET ${newValues}, total_price = ${totalPrice} WHERE user_id = ${userId} AND id = ${orderId}`;
 
 exports.DELETE_ORDER = (userId, orderId) =>
   `DELETE FROM orders WHERE user_id = ${userId} AND id = ${orderId}`;

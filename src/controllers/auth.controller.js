@@ -1,4 +1,5 @@
 const bcrypt = require("bcryptjs");
+const mysql = require("mysql");
 
 const connection = require("../db-config");
 const {
@@ -12,6 +13,7 @@ const {
   generateAccessToken,
   generateRefreshToken,
 } = require("../utils/jwt-helpers");
+const { serverError } = require("../utils/handlers");
 
 exports.register = async (req, res) => {
   // params setup
@@ -23,25 +25,23 @@ exports.register = async (req, res) => {
     throw err;
   });
 
-  // check for existing user first
-  const user = await query(con, GET_USER_BY_USERNAME, [
-    req.body.username,
-  ]).catch((err) => {
-    res.status(500);
-    res.send({ msg: "Could not retrieve user." });
-  });
+  const eUserName = mysql.escape(req.body.username);
+  const eEmail = mysql.escape(req.body.email);
+  const ePass = mysql.escape(passwordHash);
 
-  // if we get one result back
+  //checks for existing user
+  const user = await query(con, GET_USER_BY_USERNAME(eUserName)).catch(
+    serverError(res)
+  );
+
   if (user.length === 1) {
     res.status(403).send({ msg: "User already exists!" });
   } else {
-    // add new user
-    const result = await query(con, INSERT_NEW_USER, params).catch((err) => {
-      //   stop registeration
-      res
-        .status(500)
-        .send({ msg: "Could not register user. Please try again later." });
-    });
+    //adds new user
+    const result = await query(
+      con,
+      INSERT_NEW_USER(eUserName, eEmail, ePass)
+    ).catch(serverError(res));
 
     res.send({ msg: "New user created!" });
   }
@@ -53,13 +53,13 @@ exports.login = async (req, res) => {
     throw err;
   });
 
+  const eUserName = mysql.escape(req.body.username);
+
   // check for existing user first
-  const user = await query(con, GET_USER_BY_USERNAME_WITH_PASSWORD, [
-    req.body.username,
-  ]).catch((err) => {
-    res.status(500);
-    res.send({ msg: "Could not retrieve user." });
-  });
+  const user = await query(
+    con,
+    GET_USER_BY_USERNAME_WITH_PASSWORD(eUserName)
+  ).catch(serverError(res));
 
   // if the user exists
   if (user.length === 1) {
