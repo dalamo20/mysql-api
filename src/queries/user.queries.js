@@ -21,7 +21,7 @@ exports.GET_USER_BY_USERNAME_WITH_PASSWORD = (userName) =>
 exports.INSERT_NEW_USER = (userName, email, pass) =>
   `INSERT INTO users (username, email, password) VALUES (${userName}, ${email}, ${pass})`;
 
-exports.UPDATE_USER = (userId, newValues) =>
+exports.UPDATE_USER = (newValues, userId) =>
   `UPDATE users SET ${newValues} WHERE id = ${userId}`;
 
 exports.DELETE_USER = (userId) => `DELETE FROM users WHERE id = ${userId}`;

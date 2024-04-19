@@ -115,7 +115,6 @@ exports.updateOrder = async (req, res) => {
 
   const total_price = updatedDrink.price * req.body.quantity;
 
-  // Perform update. total_price was not being passed into values.
   const result = await query(
     con,
     UPDATE_ORDER(req.user.id, req.params.orderId, values, total_price)

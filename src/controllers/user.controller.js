@@ -33,8 +33,8 @@ exports.getUser = async (req, res) => {
   }
 };
 
-const _buildValuesString = (req) => {
-  const body = req.body;
+const _buildValuesString = (body) => {
+  // const body = req.body;
   const values = Object.keys(body).map(
     // [name, status].map()
     (key) => `${key} = ${mysql.escape(body[key])}` // 'New 1 drink name'
@@ -45,16 +45,11 @@ const _buildValuesString = (req) => {
   return values;
 };
 
-// THIS NEEDS WORK IN THE FUTURE
 exports.updateUser = async function (req, res) {
   // establish a connection
   const con = await connection().catch((err) => {
     throw err;
   });
-
-  const values = _buildValuesString(req);
-
-  console.log("req.user: " + req.user.id);
 
   const eUserName = mysql.escape(req.user.id);
 
@@ -64,55 +59,51 @@ exports.updateUser = async function (req, res) {
     GET_USER_BY_ID_WITH_PASSWORD(req.user.id)
   ).catch(serverError(res));
 
-  console.log("USER : " + user[0]);
-  console.log("USER 2: " + eUserName);
-
   const passwordUnchanged = await bcrypt
     .compare(req.body.password, user[0].password)
     .catch((err) => {
       res.json(500).json({ msg: "Invalid password!" });
     });
 
+  //checks password change. Use same steps for email lines 74-96
   if (!passwordUnchanged) {
     const passwordHash = bcrypt.hashSync(req.body.password);
-    console.log("USER ID???: " + user[0].id);
+
+    //encapsulating object in build function
+    const updatedValueHash = _buildValuesString({
+      ...req.body,
+      password: passwordHash,
+    });
 
     // Perform update
     const result = await query(
       con,
-      UPDATE_USER(values, passwordHash, user[0].id)
+      UPDATE_USER(updatedValueHash, user[0].id)
     ).catch(serverError(res));
 
     if (result.affectedRows === 1) {
-      res.json({ msg: "Updated succesfully!" });
+      return res.json({ msg: "Updated succesfully!" });
     }
     res.json({ msg: "Nothing to update..." });
   }
 };
 
-// NEEDS WORK
 exports.deleteUser = async function (req, res) {
-  // verify valid token
-  const decoded = req.user; // {id: 1, iat: wlenfwekl, expiredIn: 9174323 }
+  const userId = req.params.userId;
 
-  console.log("THIS IS DECODED: " + decoded);
-  // console.log("THIS IS userId: " + req.user.id);
-  console.log("THIS IS req: " + req.user.id);
-
-  // take result of middleware check
-  if (decoded.id) {
-    // establish a connection
-    const con = await connection().catch((err) => {
-      throw err;
-    });
-
-    const user = await query(con, DELETE_USER(decoded.id)).catch(
-      serverError(res)
-    );
-
-    if (!user.length) {
-      res.status(400).send({ msg: "No user found." });
-    }
-    res.json(user);
+  //is this a valid user?
+  if (!userId) {
+    return res.status(400).json({ msg: "User not found." });
   }
+
+  const con = await connection().catch((err) => {
+    throw err;
+  });
+
+  const result = await query(con, DELETE_USER(userId)).catch(serverError(res));
+
+  if (result.affectedRows !== 1) {
+    return res.status(404).json({ msg: "User not found." });
+  }
+  res.json({ msg: "User deleted successfully." });
 };

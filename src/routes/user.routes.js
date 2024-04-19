@@ -9,6 +9,6 @@ const userRoutes = express.Router();
 
 userRoutes.get("/", canAccess, getUser);
 userRoutes.put("/update", canAccess, updateUser);
-userRoutes.delete("/delete", canAccess, deleteUser);
+userRoutes.delete("/delete/:userId", canAccess, deleteUser);
 
 module.exports = userRoutes;
