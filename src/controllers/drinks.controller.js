@@ -22,7 +22,7 @@ exports.getAllDrinks = async (req, res) => {
   );
   // [] === true, 0 === false
   if (!drinks.length) {
-    res.status(200).json({ msg: "No drinks available for this user." });
+    return res.status(200).json({ msg: "No drinks available for this user." });
   }
   res.json(drinks);
 };
