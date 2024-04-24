@@ -1,16 +1,18 @@
 //below the drink id from the 'drinks' table is referenced in the 'orders' table using drink_id, which is the foreign key
 exports.CREATE_ORDERS_TABLE = `CREATE TABLE IF NOT EXISTS orders(
-    id INT NOT NULL AUTO_INCREMENT,
-    user_id int NOT NULL,
-    drink_id INT,
-    quantity INT,
-    total_price DECIMAL(8, 2),
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP(),
-    PRIMARY KEY (id),
-    FOREIGN KEY (drink_id) REFERENCES drinks(id),
-    FOREIGN KEY (user_id) REFERENCES users(id)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE
+  id INT NOT NULL AUTO_INCREMENT,
+  user_id INT NOT NULL,
+  drink_id INT,
+  quantity INT,
+  total_price DECIMAL(8, 2),
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP(),
+  PRIMARY KEY (id),
+  FOREIGN KEY (drink_id) REFERENCES drinks(id)
+      ON UPDATE CASCADE
+      ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(id)
+      ON UPDATE CASCADE
+      ON DELETE CASCADE
 )`;
 
 /* CUSTOMER ORDERS */

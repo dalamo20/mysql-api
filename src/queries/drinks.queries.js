@@ -1,12 +1,12 @@
 exports.CREATE_DRINKS_TABLE = `CREATE TABLE IF NOT EXISTS drinks(
-    id INT NOT NULL AUTO_INCREMENT,
-    user_id int NOT NULL,
-    name varchar(255) NOT NULL,
-    price DECIMAL(8, 2),
-    PRIMARY KEY (id),
-    FOREIGN KEY (user_id) REFERENCES users(id)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE
+  id INT NOT NULL AUTO_INCREMENT,
+  user_id INT NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  price DECIMAL(8, 2),
+  PRIMARY KEY (id),
+  FOREIGN KEY (user_id) REFERENCES users(id)
+      ON UPDATE CASCADE
+      ON DELETE CASCADE
 )`;
 
 /* DRINKS MENU */

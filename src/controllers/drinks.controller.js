@@ -28,17 +28,15 @@ exports.getAllDrinks = async (req, res) => {
 };
 
 exports.createDrink = async (req, res) => {
-  //verify valid token
+  // Verify valid token
   const user = req.user;
 
-  //middleware check
   if (user.id) {
     const con = await connection().catch((err) => {
       throw err;
     });
 
-    //query adding drink
-    const drinkName = mysql.escape(req.body.name); //i'm keeping it as name, not drink_name. testing if fails
+    const drinkName = mysql.escape(req.body.name);
     const drinkPrice = mysql.escape(req.body.price);
     const result = await query(
       con,
@@ -48,7 +46,17 @@ exports.createDrink = async (req, res) => {
     if (result.affectedRows !== 1) {
       res.status(500).json({ msg: `Unable to add drink: ${req.body.name}` });
     }
-    res.json({ msg: "Drink added to the menu!" });
+    //this should get the new drink with its id
+    const newDrink = await query(
+      con,
+      SINGLE_DRINK(user.id, result.insertId)
+    ).catch(serverError(res));
+
+    if (!newDrink.length) {
+      res.status(400).json({ msg: "Failed to fetch the newly created drink." });
+    }
+
+    res.json({ msg: "Drink added to the menu!", drink: newDrink[0] });
   }
 };
 

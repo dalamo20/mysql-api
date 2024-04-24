@@ -22,7 +22,7 @@ exports.getAllOrders = async (req, res) => {
   );
 
   if (!orders.length) {
-    res.status(200).json({ msg: "No orders available for this user." });
+    return res.status(200).json({ msg: "No orders available for this user." });
   }
   res.json(orders);
 };
@@ -139,7 +139,7 @@ exports.deleteOrder = async (req, res) => {
   ).catch(serverError(res));
 
   if (result.affectedRows !== 1) {
-    res
+    return res
       .status(500)
       .json({ msg: `Unable to delete order : ${req.params.drinkId}` });
   }
